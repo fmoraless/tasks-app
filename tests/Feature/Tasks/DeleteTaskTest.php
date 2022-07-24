@@ -3,6 +3,7 @@
 namespace Tests\Feature\Tasks;
 
 use App\Models\Task;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Laravel\Sanctum\Sanctum;
@@ -34,5 +35,17 @@ class DeleteTaskTest extends TestCase
         $this->deleteJson(route('api.v1.tasks.destroy', $task))
             ->assertNoContent();
         $this->assertDatabaseCount('tasks', 0);
+    }
+
+    /** @test  */
+    public function cannot_delete_tasks_assigned_to_other_managers()
+    {
+        $task = Task::factory()->create();
+        Sanctum::actingAs(User::factory()->create());
+
+        $this->deleteJson(route('api.v1.tasks.destroy', $task))
+            ->assertForbidden();
+
+        $this->assertDatabaseCount('tasks', 1);
     }
 }

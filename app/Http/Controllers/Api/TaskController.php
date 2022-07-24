@@ -51,6 +51,8 @@ class TaskController extends Controller
     /** Update the specified resource in storage. */
     public function update(Task $task, SaveTaskRequest $request): TaskResource
     {
+        $this->authorize('update', $task);
+
         $task->update($request->validate());
 
         return TaskResource::make($task);
@@ -59,6 +61,8 @@ class TaskController extends Controller
     /** Remove the specified resource from storage. */
     public function destroy(Task $task): Response
     {
+        $this->authorize('delete', $task);
+
         $task->delete();
         return response()->noContent();
     }

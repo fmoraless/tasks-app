@@ -48,6 +48,20 @@ class UpdateTaskTest extends TestCase
     }
 
     /** @test  */
+    public function cannot_update_tasks_assigned_to_other_managers()
+    {
+        $task = Task::factory()->create();
+        Sanctum::actingAs(User::factory()->create());
+
+        $response = $this->patchJson(route('api.v1.tasks.update', $task), [
+            'title' => $task->title,
+            'description' => 'Updated Task 1 description',
+
+        ])->assertForbidden();
+
+    }
+
+    /** @test  */
     public function title_is_required()
     {
         $task = Task::factory()->create();
