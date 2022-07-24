@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SaveTaskRequest;
-use App\Http\Resources\TaskCollection;
 use App\Http\Resources\TaskResource;
 use App\Models\Task;
 use Illuminate\Http\Request;
@@ -14,11 +13,14 @@ use Illuminate\Http\Response;
 
 class TaskController extends Controller
 {
-/**
-     * Display a listing of the resource.
-     *
-     * @return Response
-     */
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum', [
+            'only' => ['store', 'update', 'destroy'],
+        ]);
+    }
+
+    /** Display a listing of the resource.*/
     public function index():AnonymousResourceCollection
     {
         $tasks = Task::query()
@@ -29,17 +31,7 @@ class TaskController extends Controller
         return TaskResource::collection($tasks);
     }
 
-    public function create(Request $request)
-    {
-
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return TaskResource
-     */
+    /** Store a newly created resource in storage. */
     public function store(SaveTaskRequest $request):TaskResource
     {
         $task = Task::create($request->validate());
@@ -47,12 +39,7 @@ class TaskController extends Controller
         return TaskResource::make($task);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
+    /** Display the specified resource. */
     public function show(Task $task): JsonResource
     {
         $task = Task::where('id', $task->id)
@@ -61,13 +48,7 @@ class TaskController extends Controller
         return TaskResource::make($task);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return TaskResource
-     */
+    /** Update the specified resource in storage. */
     public function update(Task $task, SaveTaskRequest $request): TaskResource
     {
         $task->update($request->validate());
@@ -75,6 +56,7 @@ class TaskController extends Controller
         return TaskResource::make($task);
     }
 
+    /** Remove the specified resource from storage. */
     public function destroy(Task $task): Response
     {
         $task->delete();

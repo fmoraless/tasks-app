@@ -6,15 +6,30 @@ use App\Models\Task;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\JsonResponse;
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 
 class UpdateTaskTest extends TestCase
 {
     use RefreshDatabase;
+
+    /** @test  */
+    public function guests_cannot_update_tasks()
+    {
+        $task = Task::factory()->create();
+
+        $response = $this->patchJson(route('api.v1.tasks.update', $task))
+            ->assertUnauthorized();
+
+        //$response->assertJsonApiError();
+
+    }
+
     /** @test  */
     public function can_update_tasks()
     {
         $task = Task::factory()->create();
+        Sanctum::actingAs($task->manager);
 
         $response = $this->patchJson(route('api.v1.tasks.update', $task), [
             'title' => $task->title,
@@ -33,6 +48,8 @@ class UpdateTaskTest extends TestCase
     public function title_is_required()
     {
         $task = Task::factory()->create();
+        Sanctum::actingAs($task->manager);
+
         $this->patchJson(route('api.v1.tasks.update', $task), [
             'description' => 'Update Task 1 description',
         ])->assertJsonApiValidationErrors('title');
@@ -44,6 +61,7 @@ class UpdateTaskTest extends TestCase
     public function title_must_have_at_least_4_characters()
     {
         $task = Task::factory()->create();
+        Sanctum::actingAs($task->manager);
 
         $this->patchJson(route('api.v1.tasks.update', $task), [
             'title' => 'Tas',
@@ -57,6 +75,7 @@ class UpdateTaskTest extends TestCase
     {
         $task1 = Task::factory()->create();
         $task2 = Task::factory()->create();
+        Sanctum::actingAs($task1->manager);
 
         $this->patchJson(route('api.v1.tasks.update', $task1), [
             'title' => $task2->title,
@@ -69,6 +88,7 @@ class UpdateTaskTest extends TestCase
     public function description_is_required()
     {
         $task = Task::factory()->create();
+        Sanctum::actingAs($task->manager);
 
         $this->patchJson(route('api.v1.tasks.update', $task), [
             'title' => 'Update title Task 1',
