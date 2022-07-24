@@ -17,10 +17,12 @@ class CreateTaskTest extends TestCase
     /** @test  */
     public function guests_cannot_create_tasks()
     {
-        $response = $this->postJson(route('api.v1.tasks.store'))
-            ->assertUnauthorized();
-
-        //$response->assertJsonApiError();
+        $this->postJson(route('api.v1.tasks.store'))
+            ->assertJsonApiError(
+                title: 'Unauthenticated',
+                detail: 'This action requires authentication.',
+                status: '401'
+            );
 
         $this->assertDatabaseCount('tasks', 0);
     }

@@ -13,12 +13,16 @@ class DeleteTaskTest extends TestCase
     use RefreshDatabase;
 
     /** @test  */
-    public function guests_can_delete_tasks()
+    public function guests_cannot_delete_tasks()
     {
         $task = Task::factory()->create();
 
         $this->deleteJson(route('api.v1.tasks.destroy', $task))
-            ->assertUnauthorized();
+            ->assertJsonApiError(
+                title: 'Unauthenticated',
+                detail: 'This action requires authentication.',
+                status: '401'
+            );
     }
 
     /** @test  */

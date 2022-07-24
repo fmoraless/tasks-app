@@ -35,4 +35,17 @@ class ListTasksTest extends TestCase
            'title', 'description'
         ]);
     }
+
+    /** @test  */
+    public function it_returns_a_json_api_error_when_a_task_is_not_found()
+    {
+
+        $response = $this->getJson(route('api.v1.tasks.show', 'not-existing-task'));
+
+        $response->assertJsonApiError(
+            title: "Not Found",
+            detail: "Not records found with the id 'not-existing-task' in 'tasks' resource",
+            status: "404",
+        );
+    }
 }

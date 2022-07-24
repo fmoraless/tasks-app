@@ -3,6 +3,7 @@
 namespace Tests\Feature\Tasks;
 
 use App\Models\Task;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\JsonResponse;
@@ -19,9 +20,11 @@ class UpdateTaskTest extends TestCase
         $task = Task::factory()->create();
 
         $response = $this->patchJson(route('api.v1.tasks.update', $task))
-            ->assertUnauthorized();
-
-        //$response->assertJsonApiError();
+            ->assertJsonApiError(
+                title: 'Unauthenticated',
+                detail: 'This action requires authentication.',
+                status: '401'
+            );
 
     }
 
