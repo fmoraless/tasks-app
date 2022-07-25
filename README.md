@@ -1,64 +1,139 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Tasks API
 
-## About Laravel
+CRUD de tareas
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+Api desarrollada con Laravel9 y metodología TDD (desarrollo guiado por pruebas) con Docker a través de Laravel Sail.
+Esta API Cumple con estándar JSON API
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Features
 
-## Learning Laravel
+- Agregar, editar, eliminar tareas
+- Listar tareas y consultar tarea individualmente
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Installación
 
-## Laravel Sponsors
+#### Requisitos previos:
+- Docker y Wsl2 instalados
+- Postman
+- PHP 8.0.2
+- Node 12.22.12 o superior
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+#### Ejecución en local
 
-### Premium Partners
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+* Clonar desde github (usar github desktop)
+```bash
+  gh repo clone fmoraless/tasks-app
+```
+* Vaya a la carpeta del proyecto (ideal en wsl)
+```bash
+  cd tasks-app
+```
 
-## Contributing
+* Instalar dependencias con composer desde consola
+```bash
+  composer install
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+* Instalar dependencias node
+```bash
+  npm install
+```
 
-## Code of Conduct
+## Variables de entorno
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Para ejecutar este proyecto, Necesitarás añadir las siguientes variables de entorno en **.env file**
 
-## Security Vulnerabilities
+`DB_DATABASE=your-database`
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+`DB_USERNAME=your-username`
 
-## License
+`DB_PASSWORD=your-password`
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+`APP_KEY=base64:APP_KEY` (**)
+
+** para generar el APP_KEY, se necesita ejecutar el siguiente comando:
+
+```bash
+  php artisan key:generate
+```
+## Ejecutar Localmente
+
+Ejecutar Comando para datos de prueba
+
+Este comando genera un usuario con su token para probar en Postman.
+```bash
+  sail artisan generate:test-data
+```
+ej:
+User UUID:
+
+37e8da0b-f02f-4d2d-84a4-293b041b0c62
+
+Token:
+
+8|GB2zysNaPdgy085RllGaKPqvPkDTrJpId0DQRQjc
+
+Tarea ID:
+64
+
+
+Iniciar el contenedor Docker
+
+* configurar alias de Laravel Sail
+```bash
+  alias sail='[ -f sail ] && bash sail || bash vendor/bin/sail'
+```
+
+```bash
+  sail up -d
+```
+
+
+#
+Ir a Postman
+
+http://localhost/api/v1/register (tu localhost)
+
+utilizar usuario para prueba:
+```bash
+ {
+    "name": "Example user",
+    "email": "example@admin.com",
+    "password": "password",
+    "device_name": "My Example device"
+ }
+```
+La api responderá co el token para acceder a las funciones CRUD.
+
+importante señalar que JSON API requiere los siguientes headers:
+Accept: application/vnd.api+json
+Content-Type: application/vnd.api+json
+## Ejecutar tests
+
+Para ejecutar los test, use el siguiente comando:
+
+```bash
+  php artisan test
+```
+
+
+## Screenshots
+
+#### Acceso - Registro usuario
+
+![Registro de usuario](https://drive.google.com/uc?export=view&id=1_uMSo3fa6CqLvJs86VHc7Lr4bGNHWA0e)
+
+#### Crear una Tarea
+![Add task](https://drive.google.com/uc?export=view&id=1fNC3SR2Dtqactr6D3jCrNz_Wdd5klF4y)
+
+#### Actualizar una tarea
+![update task](https://drive.google.com/uc?export=view&id=1fEimhDdjCl6sGje8K_96kpnPc5HCOoFH)
+
+## Feedback
+
+Si tienes algun Feedback, por favor hazme saber fcomorales.sanchez@gmail.com
+
