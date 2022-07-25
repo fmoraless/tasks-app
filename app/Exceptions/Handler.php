@@ -2,8 +2,17 @@
 
 namespace App\Exceptions;
 
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use App\Http\Responses\JsonApiValidationErrorResponse;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Throwable;
+
 
 class Handler extends ExceptionHandler
 {
@@ -36,15 +45,28 @@ class Handler extends ExceptionHandler
         'password_confirmation',
     ];
 
-    /**
-     * Register the exception handling callbacks for the application.
-     *
-     * @return void
-     */
+
     public function register()
     {
-        $this->reportable(function (Throwable $e) {
-            //
+        $this->renderable(function (NotFoundHttpException $e) {
+            throw new JsonApi\NotFoundHttpException;
         });
+
+        $this->renderable(function (BadRequestHttpException $e) {
+            throw new JsonApi\BadRequestHttpException($e->getMessage());
+        });
+
+        $this->renderable(function (AuthenticationException $e) {
+            throw new JsonApi\AuthenticationException;
+        });
+    }
+
+    protected function invalidJson($request, ValidationException $exception): JsonResponse
+    {
+        if (! $request->routeIs('api.v1.login')) {
+            return new JsonApiValidationErrorResponse($exception);
+        }
+
+        return parent::invalidJson($request, $exception);
     }
 }
